@@ -1,0 +1,7 @@
+-r requirements.txt
+pytest>=7.4.0
+pytest-cov>=4.1.0
+black>=23.0.0
+jupyter>=1.0.0
+matplotlib>=3.8.0
+folium>=0.15.0
