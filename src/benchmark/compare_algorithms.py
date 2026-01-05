@@ -4,8 +4,11 @@ from src.algorithms.dijkstra import DijkstraAlgorithm
 from src.algorithms.astar import AStarAlgorithm
 
 
+def clean(x):
+    return float(x)
+
+
 def compare():
-    print("Loading graph...")
     place = "Moda, Kadıköy, Istanbul, Turkey"
     G = ox.graph_from_place(place, network_type="drive")
 
@@ -24,18 +27,19 @@ def compare():
         "target": target,
         "results": {
             "dijkstra": {
-                "distance": d_dist,
+                "distance": clean(d_dist),
                 "visited_nodes": d_visited,
                 "execution_time_ms": d_time,
             },
             "astar": {
-                "distance": a_dist,
+                "distance": clean(a_dist),
                 "visited_nodes": a_visited,
                 "execution_time_ms": a_time,
             },
         },
     }
 
+    print("Comparison Results:")
     print(results)
 
 
