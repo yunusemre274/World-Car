@@ -4,8 +4,19 @@ from math import radians, sin, cos, sqrt, atan2
 
 
 class AStarAlgorithm:
-    def __init__(self):
-        pass
+    def __init__(self, heuristic_weight=1.0):
+        """
+        Initialize A* algorithm.
+
+        Args:
+            heuristic_weight: Weight for the heuristic (epsilon in Weighted A*).
+                             1.0 = standard A* (optimal)
+                             >1.0 = weighted A* (faster, near-optimal)
+                             Recommended: 1.5 for balanced, 2.0 for aggressive
+        """
+        if heuristic_weight < 1.0:
+            raise ValueError("Heuristic weight must be >= 1.0")
+        self.heuristic_weight = heuristic_weight
 
     # --------------------------------------------------
     # Heuristic: Haversine distance (meters)
@@ -69,8 +80,12 @@ class AStarAlgorithm:
                 break
 
             for neighbor in G.neighbors(current):
-                edge_data = G[current][neighbor][0]
-                weight = edge_data.get("length", 1.0)
+                # MultiDiGraph can have multiple edges - select minimum
+                edges = G[current][neighbor]
+                if len(edges) == 1:
+                    weight = edges[0].get("length", 1.0)
+                else:
+                    weight = min(edge.get("length", float("inf")) for edge in edges.values())
 
                 tentative_g = g_score[current] + weight
 
@@ -78,9 +93,10 @@ class AStarAlgorithm:
                     g_score[neighbor] = tentative_g
                     previous[neighbor] = current
 
-                    f_score = tentative_g + self.heuristic(
+                    # Weighted A*: f(n) = g(n) + ε × h(n)
+                    f_score = tentative_g + (self.heuristic_weight * self.heuristic(
                         neighbor, target, pos
-                    )
+                    ))
 
                     heapq.heappush(open_set, (f_score, neighbor))
 

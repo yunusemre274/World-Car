@@ -3,11 +3,21 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import heapq
 import random
-import math
+from math import radians, sin, cos, sqrt, atan2
 
 
 def heuristic(a, b, pos):
-    return math.dist(pos[a], pos[b])
+    """Haversine distance in meters"""
+    lon1, lat1 = pos[a]
+    lon2, lat2 = pos[b]
+    R = 6371000  # Earth radius in meters
+
+    phi1, phi2 = radians(lat1), radians(lat2)
+    dphi = radians(lat2 - lat1)
+    dlambda = radians(lon2 - lon1)
+
+    h = (sin(dphi / 2) ** 2 + cos(phi1) * cos(phi2) * sin(dlambda / 2) ** 2)
+    return 2 * R * atan2(sqrt(h), sqrt(1 - h))
 
 
 def animate_astar():
